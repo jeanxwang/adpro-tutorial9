@@ -4,13 +4,13 @@ use tokio_stream::wrappers::ReceiverStream;
 use tokio::sync::mpsc::{Sender, Receiver};
 use tokio::io::{self, AsyncBufReadExt};
 
-use services::{payment_service_client::PaymentServiceClient, PaymentRequest,
-    transaction_service_client::TransactionServiceClient, TransactionRequest,
-    chat_service_client::ChatServiceClient, ChatMessage};
-
 pub mod services {
     tonic::include_proto!("services");
 }
+
+use services::{payment_service_client::PaymentServiceClient, PaymentRequest,
+    transaction_service_client::TransactionServiceClient, TransactionRequest,
+    chat_service_client::ChatServiceClient, ChatMessage};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -35,7 +35,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let channel = Channel::from_static("http://[::1]:50051").connect().await?;
     let mut client = ChatServiceClient::new(channel);
-
     let (tx, rx): (Sender<ChatMessage>, Receiver<ChatMessage>) = mpsc::channel(32);
 
     tokio::spawn(async move {
